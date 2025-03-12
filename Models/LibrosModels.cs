@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Biblioteca.Models
 {
@@ -16,15 +16,21 @@ namespace Biblioteca.Models
 
         [Required(ErrorMessage = "La fecha de publicación es requerida.")]
         [DataType(DataType.Date)]
-        public DateOnly FechaPublicacion { get; set; }
+        public DateTime FechaPublicacion { get; set; }
 
         [Required(ErrorMessage = "El ISBN es requerido.")]
         public string ISBN { get; set; }
 
-        ///// Relaciones con Autor
+        // Relación con Autores (muchos libros pueden ser de un autor)
         [ForeignKey("AutorId")]
-        public int AutorId { get; set; }  // Foreign Key a AutoresModels
+        public int AutorId { get; set; }
 
-        public AutoresModels Autor { get; set; }  // Relación N:1 con Autores
+        public AutoresModels Autor { get; set; }
+
+        // Relación con Editoriales (un libro tiene una editorial)
+        [ForeignKey("EditorialId")]
+        public int EditorialId { get; set; }
+
+        public EditorialesModels Editorial { get; set; }
     }
 }

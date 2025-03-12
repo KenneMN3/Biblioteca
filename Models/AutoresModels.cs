@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace Biblioteca.Models
 {
@@ -14,13 +17,13 @@ namespace Biblioteca.Models
         public string Apellido { get; set; }
 
         [Required(ErrorMessage = "La fecha de nacimiento del autor es requerida.")]
-        [DataType(DataType.Date)]  // Asegura que solo se almacene la fecha, no la hora.
+        [DataType(DataType.Date)]
         public DateTime FechaNacimiento { get; set; }
 
         [Required(ErrorMessage = "La nacionalidad del autor es requerida.")]
         public string Nacionalidad { get; set; }
 
-        ///// Relaciones con Libros
-        public ICollection<LibrosModels> Libros { get; set; }  // Relación 1:N con Libros
+        // Relación con Libros (1 autor puede tener varios libros)
+        public ICollection<LibrosModels> Libros { get; set; }
     }
 }

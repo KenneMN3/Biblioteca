@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteca.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250312001739_tablas")]
+    [Migration("20250312215032_tablas")]
     partial class tablas
     {
         /// <inheritdoc />
@@ -53,6 +53,34 @@ namespace Biblioteca.Data.Migrations
                     b.ToTable("Autores");
                 });
 
+            modelBuilder.Entity("Biblioteca.Models.EditorialesModels", b =>
+                {
+                    b.Property<int>("EditorialId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EditorialId"));
+
+                    b.Property<int>("AnioFundacion")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Contacto")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pais")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EditorialId");
+
+                    b.ToTable("Editoriales");
+                });
+
             modelBuilder.Entity("Biblioteca.Models.LibrosModels", b =>
                 {
                     b.Property<int>("LibroId")
@@ -64,8 +92,11 @@ namespace Biblioteca.Data.Migrations
                     b.Property<int>("AutorId")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("FechaPublicacion")
-                        .HasColumnType("date");
+                    b.Property<int>("EditorialId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaPublicacion")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Genero")
                         .IsRequired()
@@ -83,7 +114,71 @@ namespace Biblioteca.Data.Migrations
 
                     b.HasIndex("AutorId");
 
+                    b.HasIndex("EditorialId");
+
                     b.ToTable("Libros");
+                });
+
+            modelBuilder.Entity("Biblioteca.Models.PrestamosModels", b =>
+                {
+                    b.Property<int>("PrestamoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PrestamoId"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaDevolucion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaPrestamo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LibroId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PrestamoId");
+
+                    b.HasIndex("LibroId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Prestamos");
+                });
+
+            modelBuilder.Entity("Biblioteca.Models.UsuariosModels", b =>
+                {
+                    b.Property<int>("UsuarioId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UsuarioId"));
+
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UsuarioId");
+
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -296,7 +391,34 @@ namespace Biblioteca.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Biblioteca.Models.EditorialesModels", "Editorial")
+                        .WithMany("Libros")
+                        .HasForeignKey("EditorialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Autor");
+
+                    b.Navigation("Editorial");
+                });
+
+            modelBuilder.Entity("Biblioteca.Models.PrestamosModels", b =>
+                {
+                    b.HasOne("Biblioteca.Models.LibrosModels", "Libro")
+                        .WithMany()
+                        .HasForeignKey("LibroId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Biblioteca.Models.UsuariosModels", "Usuario")
+                        .WithMany("Prestamos")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Libro");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -353,6 +475,16 @@ namespace Biblioteca.Data.Migrations
             modelBuilder.Entity("Biblioteca.Models.AutoresModels", b =>
                 {
                     b.Navigation("Libros");
+                });
+
+            modelBuilder.Entity("Biblioteca.Models.EditorialesModels", b =>
+                {
+                    b.Navigation("Libros");
+                });
+
+            modelBuilder.Entity("Biblioteca.Models.UsuariosModels", b =>
+                {
+                    b.Navigation("Prestamos");
                 });
 #pragma warning restore 612, 618
         }
